@@ -45,14 +45,12 @@ RUN apt-get update && \
     libnss3 \
     lsb-release \
     xdg-utils \
-    wget \
-    chromium && \
+    wget && \
     apt-get clean autoclean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # INSTALL @angular/cli
 RUN npm install -g @angular/cli@${ANGULAR_CLI_VERSION} && \
-    npm install -g puppeteer && \
     rm -rf /tmp/* /var/cache/apk/* *.tar.gz ~/.npm && \
     npm cache clear --force && \
     yarn cache clean
