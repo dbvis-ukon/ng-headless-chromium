@@ -1,9 +1,12 @@
 ARG NODE_VERSION=latest
+
 FROM node:$NODE_VERSION
 
 ARG ANGULAR_CLI_VERSION="^6"
 
-RUN apt-get update \
+LABEL author="Wolfgang Jentner <wolfgang.jentner@uni.kn>"
+
+RUN apt-get update && \
     apt-get install -y \
     gconf-service \
     libasound2 \
@@ -56,6 +59,6 @@ RUN npm install -g @angular/cli@${ANGULAR_CLI_VERSION} && \
     #sed -i -e "s/bin\/ash/bin\/sh/" /etc/passwd
 
 # adding a chromium user
-RUN useradd -ms /bin/bash chromium
+RUN useradd -ms /bin/sh chromium
 
 USER chromium
