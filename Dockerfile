@@ -114,7 +114,9 @@ RUN set -ex; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
 	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
+	chown pptruser /usr/local/bin/gosu; \
 	chmod +x /usr/local/bin/gosu; \
+	chmod +s /usr/local/bin/gosu; \
 # verify that the binary works
 	gosu nobody true; \
 	\
@@ -122,6 +124,9 @@ RUN set -ex; \
 
 # Run everything after as non-privileged user.
 USER pptruser
+
+# check that gosu can be executed from pptruser
+RUN gosu root true;
 
 
 ENTRYPOINT ["dumb-init", "--"]
