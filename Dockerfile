@@ -8,11 +8,8 @@ FROM node:$NODE_VERSION
 
 LABEL author="Wolfgang Jentner <wolfgang.jentner@uni.kn>"
 
-#in order to install gosu
-RUN echo "deb http://ftp.de.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
-
 # See https://crbug.com/795759
-RUN apt-get update && apt-get install -yq libgconf-2-4 gosu
+RUN apt-get update && apt-get install -yq libgconf-2-4
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
@@ -95,8 +92,37 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
     && chown -R pptruser:pptruser /home/pptruser \
     && chown -R pptruser:pptruser /node_modules
 
+# install gosu: https://github.com/tianon/gosu/blob/master/INSTALL.md#from-debian
+ENV GOSU_VERSION 1.10
+RUN set -ex; \
+	\
+	fetchDeps=' \
+		ca-certificates \
+		wget \
+	'; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends $fetchDeps; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	\
+# verify the signature
+	export GNUPGHOME="$(mktemp -d)"; \
+	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	\
+	chmod +x /usr/local/bin/gosu; \
+# verify that the binary works
+	gosu nobody true; \
+	\
+	apt-get purge -y --auto-remove $fetchDeps
+
 # Run everything after as non-privileged user.
 USER pptruser
+
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["google-chrome-unstable"]
