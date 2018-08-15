@@ -8,6 +8,9 @@ FROM node:$NODE_VERSION
 
 LABEL author="Wolfgang Jentner <wolfgang.jentner@uni.kn>"
 
+#in order to install gosu
+RUN echo "deb http://ftp.de.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+
 # See https://crbug.com/795759
 RUN apt-get update && apt-get install -yq libgconf-2-4 gosu
 
