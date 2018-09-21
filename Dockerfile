@@ -121,6 +121,9 @@ RUN set -ex; \
 	\
 	apt-get purge -y --auto-remove $fetchDeps
 
+ADD ./tests /tmp/tests
+RUN chmod +x /tmp/tests/run-test.sh
+
 # Run everything after as non-privileged user.
 USER pptruser
 
