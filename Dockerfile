@@ -123,6 +123,7 @@ RUN set -ex; \
 
 ADD ./tests /tmp/tests
 RUN chmod +x /tmp/tests/run-test.sh
+RUN chown -r pptruser /tmp/tests
 
 # Run everything after as non-privileged user.
 USER pptruser
