@@ -61,8 +61,7 @@ RUN apt-get update && apt-get install -yq wget --no-install-recommends \
 		libnss3 \
 		lsb-release \
 		xdg-utils \
-		wget && \
-      	--no-install-recommends \
+		wget
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean autoclean \
     && apt-get purge --auto-remove -y curl \
