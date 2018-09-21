@@ -1,5 +1,6 @@
 #!/bin/sh
 
 echo "start test"
-node -V
+node -v
+cd ./angular-test && ng test --no-watch --no-progress
 echo "test done"
